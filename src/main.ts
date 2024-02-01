@@ -3,20 +3,27 @@ import {db, firestore} from '../banco_de_dados/firebase';
 
 const app = express();
 
+app.use(express.json())
+
 app.get('/', (req, res) =>{
-    res.send('Ja ta podendo sair da API já?💕');
+    res.send('Bem vindo a minha primeira API né pae😎💕');
 });
 
 app.post('/usuario', async (req, res) => {
-    const usuario = req.body.nome
+    const nome = req.body.nome;
+    const email = req.body.email;
+    const telefone = req.body.telefone;
 
     try {
-        const docRef = await firestore.addDoc(firestore.collection(db, 'usuarios'), {
-            nome: nome,
+        const docRef = await firestore.addDoc(firestore.collection(db, 'usuarios'), 
+        {
+            nome: nome, 
+            email: email,
+            telefone: telefone,
         })
-        res.send(docRef.id)
+        res.send("Usuário adicionado com sucesso: " + docRef.id)
     } catch (e) {
-        console.log(e)
+        console.log("Erro ao adicionar usuário: ", e)
         res.status(500).send(e)
     }
 })
