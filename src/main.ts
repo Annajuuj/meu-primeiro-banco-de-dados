@@ -1,11 +1,12 @@
 import express from "express";
-import {db, firestore} from '../banco_de_dados/firebase';
+import { db, firestore } from '../banco_de_dados/firebase';
+import { doc } from "firebase/firestore";
 
 const app = express();
 
 app.use(express.json())
 
-app.get('/', (req, res) =>{
+app.get('/', (req, res) => {
     res.send('Bem vindo a minha primeira API né pae😎💕');
 });
 
@@ -15,21 +16,36 @@ app.post('/usuario', async (req, res) => {
     const telefone = req.body.telefone;
 
     try {
-        const docRef = await firestore.addDoc(firestore.collection(db, 'usuarios'), 
-        {
-            nome: nome, 
-            email: email,
-            telefone: telefone,
-        })
+        const docRef = await firestore.addDoc(firestore.collection(db, 'usuarios'),
+            {
+                nome: nome,
+                email: email,
+                telefone: telefone,
+            })
         res.send("Usuário adicionado com sucesso: " + docRef.id)
     } catch (e) {
         console.log("Erro ao adicionar usuário: ", e)
         res.status(500).send(e)
     }
+});
+app.get('/listarUsuarios', async (req, res) => {
+try {
+    const usuarios = await firestore.getDocs(firestore.collection(db, 'usuarios'))
+
+    const usuarioLista = usuarios.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }))
+    res.send(usuarioLista);
+} catch (e) {
+    console.log ("Erro ao listar usuário:" + e)
+    res.status(500).send("Erro ao listar usuários:" + e)
+}
 })
 
-app.listen(3000,function(){
+app.listen(3000, function () {
     console.log("Serviço rodando em http://localhost:3000");
 });
+
 
 
