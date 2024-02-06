@@ -27,20 +27,39 @@ app.post('/usuario', async (req, res) => {
         console.log("Erro ao adicionar usuário: ", e)
         res.status(500).send(e)
     }
-});
-app.get('/listarUsuarios', async (req, res) => {
-try {
-    const usuarios = await firestore.getDocs(firestore.collection(db, 'usuarios'))
 
-    const usuarioLista = usuarios.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }))
-    res.send(usuarioLista);
-} catch (e) {
-    console.log ("Erro ao listar usuário:" + e)
-    res.status(500).send("Erro ao listar usuários:" + e)
-}
+
+});
+
+app.put('/atualizarUsuario/:id', async (req, res) => {
+    const id = req.params.id
+    const nome = req.body.nome
+
+    try {
+        await firestore.updateDoc(firestore.doc(db, 'usuarios', id), {
+            nome: nome,
+        })
+        res.send('Usuários atualizado com sucesso!')
+    } catch (e) {
+        console.log('Erro ao atualizar o usuário: ' + e)
+
+        res.status(500).send('Erro ao atualizar o usuários: ' + e)
+    }
+})
+
+app.get('/listarUsuarios', async (req, res) => {
+    try {
+        const usuarios = await firestore.getDocs(firestore.collection(db, 'usuarios'))
+
+        const usuarioLista = usuarios.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }))
+        res.send(usuarioLista);
+    } catch (e) {
+        console.log("Erro ao listar usuário:" + e)
+        res.status(500).send("Erro ao listar usuários:" + e)
+    }
 })
 
 app.listen(3000, function () {
