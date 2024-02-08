@@ -62,6 +62,21 @@ app.get('/listarUsuarios', async (req, res) => {
     }
 })
 
+app.delete("/deletarUsuario/:id",async(req,res)=>{
+    const id = req.params.id
+
+
+    try {
+        await firestore.deleteDoc(firestore.doc(db, 'usuarios', id))
+
+        res.send("Usuario deletado com sucesso!!")
+    } catch (error) {
+        res.send("Erro ao deletar usuario: " + error)
+    }
+
+
+})
+
 app.listen(3000, function () {
     console.log("Serviço rodando em http://localhost:3000");
 });
