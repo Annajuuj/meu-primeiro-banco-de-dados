@@ -10,10 +10,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     "origin": "*",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-}))
+}));
 
 app.get('/', (req, res) => {
-    res.send('Bem vindo a minha primeira API né pae😎💕');
+   return res.json(
+        'Bem vindo a minha primeira API né pae😎💕');
 });
 
 app.post('/formulario', async (req, res) => {
@@ -22,6 +23,7 @@ app.post('/formulario', async (req, res) => {
     const telefone = req.body.telefone;
     const descricao = req.body.descricao;
 
+    console.log(req.body);
     try {
         const docRef = await firestore.addDoc(firestore.collection(db, 'formulario'),
             {
@@ -29,10 +31,11 @@ app.post('/formulario', async (req, res) => {
                 email: email,
                 telefone: telefone,
                 descricao: descricao,
-            })
-        res.send("Resposta adicionado com sucesso: " + docRef.id)
+            });
+
+        res.send("Resposta enviada com sucesso: " + docRef.id)
     } catch (e) {
-        console.log("Erro ao adicionar resposta: ", e)
+        console.log("Erro ao enviar resposta: ", e)
         res.status(500).send(e)
     }
 
@@ -48,14 +51,14 @@ app.put('/atualizarFormulario/:id', async (req, res) => {
         await firestore.updateDoc(firestore.doc(db, 'formulario', id), {
             nome: nome,
 
-        })
+        });
         res.send('Formulario atualizado com sucesso!')
     } catch (e) {
         console.log('Erro ao atualizar o formulario: ' + e)
 
         res.status(500).send('Erro ao atualizar o formulario: ' + e)
     }
-})
+});
 
 app.get('/listarFormulario', async (req, res) => {
     try {
@@ -85,7 +88,7 @@ app.delete("/deletarformulario/:id",async(req,res)=>{
     }
 
 
-})
+});
 
 app.listen(3000, function () {
     console.log("Serviço rodando em http://localhost:3000");
